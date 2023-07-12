@@ -35,7 +35,7 @@ jobs:
         blackduck_scan_full: true
         blackduck_scan_failure_severities: 'BLOCKER'
         github_token: ${{ secrets.GITHUB_TOKEN }}
-#        bridge_download_version: 0.1.272
+        bridge_download_version: 0.1.272
     - name: Black Duck PR Scan
       if: ${{ github.event_name == 'pull_request' }}
       uses: synopsys-sig/synopsys-action@v1.2.0
@@ -45,13 +45,12 @@ jobs:
         DETECT_CODE_LOCATION_NAME: ${{ github.event.repository.name }}-${{ github.base_ref }}
         DETECT_EXCLUDED_DETECTOR_TYPES: 'GIT'
       with:
+        blackduck_url: ${{ vars.BLACKDUCK_URL }}
+        blackduck_apiToken: ${{ secrets.BLACKDUCK_API_TOKEN }}      
         blackduck_scan_full: false
         blackduck_automation_prcomment: true
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        blackduck_url: ${{ vars.BLACKDUCK_URL }}
-        blackduck_apiToken: ${{ secrets.BLACKDUCK_API_TOKEN }}
-#        bridge_download_version: 0.1.272
-
+        bridge_download_version: 0.1.272
 #    - name: Save Logs
 #      if: always()
 #      uses: actions/upload-artifact@v3
