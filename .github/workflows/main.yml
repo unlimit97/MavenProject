@@ -37,10 +37,10 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         #bridge_download_version: 0.1.272, 1.2.0
         ### Uncomment below configuration to enable automatic fix pull request creation if vulnerabilities are reported
-        # blackduck_fixpr_enabled: true
-        # blackduck_fixpr_maxCount: 5
-        # blackduck_fixpr_filter_severities: 'CRITICAL,HIGH'
-        # blackduck_fixpr_useUpgradeGuidance: 'SHORT_TERM,LONG_TERM'
+        blackduck_fixpr_enabled: true
+        blackduck_fixpr_maxCount: 5
+        blackduck_fixpr_filter_severities: 'CRITICAL,HIGH'
+        blackduck_fixpr_useUpgradeGuidance: 'SHORT_TERM,LONG_TERM'
         # github_token: ${{ secrets.GITHUB_TOKEN }} # Mandatory when blackduck_fixpr_enabled is set to 'true'
         ### Uncomment below configuration if Synopsys Bridge diagnostic files needs to be uploaded
         include_diagnostics: true
@@ -60,6 +60,7 @@ jobs:
         blackduck_automation_prcomment: true
         github_token: ${{ secrets.GITHUB_TOKEN }}
         #bridge_download_version: 0.1.272, 1.2.0
+        include_diagnostics: true
 #    - name: Save Logs
 #      if: always()
 #      uses: actions/upload-artifact@v3
