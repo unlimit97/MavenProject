@@ -6,7 +6,7 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 variables:
-  - group: poc357.blackduck.synopsys.com
+  - group: For_Blackduck
 steps:
 - task: JavaToolInstaller@0
   displayName: 'Use Java 17'
