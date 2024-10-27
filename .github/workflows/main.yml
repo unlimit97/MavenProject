@@ -32,7 +32,7 @@ jobs:
         DETECT_CODE_LOCATION_NAME: ${{ github.event.repository.name }}-${{ github.ref_name }}
         DETECT_EXCLUDED_DETECTOR_TYPES: 'GIT'
         #blackduck.waitForScan
-        BRIDGE_WAIT_FOR_SCAN: 'FALSE'
+        #BRIDGE_WAIT_FOR_SCAN: 'FALSE'
       with:
         blackduck_url: ${{ vars.BLACKDUCK_URL }}
         blackduck_token: ${{ secrets.BLACKDUCK_API_TOKEN }}
