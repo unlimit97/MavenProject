@@ -54,7 +54,8 @@ jobs:
 
         ### SARIF report generation and upload to GitHub Adavanced Security: Uncomment below to enable
         blackduck_reports_sarif_create: true # Create Black Duck SARIF report and upload it as artifact
-        blackduck_reports_sarif_file_path: '/Users/tmp/report.sarif.json' # File path including file name where SARIF report should be created(need to include file name as well)
+        #blackduck_reports_sarif_file_path: '/Users/tmp/report.sarif.json' # File path including file name where SARIF report should be created(need to include file name as well)
+        blackduck_reports_sarif_file_path: '/tmp/report.sarif.json'
         blackduck_reports_sarif_severities: 'CRITICAL,HIGH'
         blackduck_reports_sarif_groupSCAIssues: true # By default true
         blackduck_upload_sarif_report: true  # Upload Black Duck SARIF report in GitHub Advanced Security tab
