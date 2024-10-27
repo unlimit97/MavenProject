@@ -1,44 +1,83 @@
 # example workflow for Black Duck scans using the Synopsys Action
 # https://github.com/marketplace/actions/synopsys-action
-name: blackduck
+name: CI-BlackDuck
 on:
   push:
     branches: [ main, master, develop, stage, release ]
   pull_request:
     branches: [ main, master, develop, stage, release ]
-  workflow_dispatch:
 jobs:
-  blackduck:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: [ ubuntu-latest ]
     steps:
-    - name: Checkout Source
-      uses: actions/checkout@v4
-    - name: Setup Java JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: 17
-        distribution: microsoft
-        cache: maven
-    - name: Maven Build
-      run: mvn -B -DskipTests package
-    - name: Black Duck Scan
-      uses: synopsys-sig/synopsys-action@v1.13.0
-      env:
-        DETECT_PROJECT_NAME: ${{ github.event.repository.name }}
-      with:
-        blackduck_url: ${{ vars.BLACKDUCK_URL }}
-        blackduck_token: ${{ secrets.BLACKDUCK_API_TOKEN }}
-        blackduck_scan_failure_severities: 'BLOCKER'
-        blackduck_fixpr_enabled: true
-        blackduck_prComment_enabled: true
-        blackduck_reports_sarif_create: true
-        blackduck_upload_sarif_report: true
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        # include_diagnostics: true
-#    - name: Save Logs
-#      if: always()
-#      uses: actions/upload-artifact@v4
-#      with:
-#        name: bridge-logs
-#        path: ${{ github.workspace }}/.bridge
-#        include-hidden-files: true
+      - name: Checkout Source
+        uses: actions/checkout@v3
+      - name: Black Duck Full Scan
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: synopsys-sig/synopsys-action@v1.13.0
+
+        ### Use below configuration to set specific detect environment variables
+        env:
+          DETECT_PROJECT_NAME: ${{ github.event.repository.name }}
+        with:
+          blackduck_url: ${{ vars.BLACKDUCK_URL }}
+          blackduck_token: ${{ secrets.BLACKDUCK_TOKEN }}
+          blackduck_scan_full: true
+          # blackduck_waitForScan: false   # Used to support the async mode
+  
+          ### Accepts Multiple Values
+          blackduck_scan_failure_severities: 'BLOCKER,CRITICAL'
+          
+          ### Arbitrary product-related CL arguments
+          # blackduck_search_depth: 2
+          # blackduck_args: '--detect.diagnostic=true'
+          # blackduck_config_path: '/Users/Config/application.properties'
+ 
+          ### Uncomment below configuration to enable automatic fix pull request creation if vulnerabilities are reported
+          # blackduck_fixpr_enabled: true
+          # blackduck_fixpr_maxCount: 5
+          # blackduck_fixpr_filter_severities: 'CRITICAL,HIGH'
+          # blackduck_fixpr_useUpgradeGuidance: 'SHORT_TERM,LONG_TERM'
+          # github_token: ${{ secrets.GITHUB_TOKEN }} # Mandatory when blackduck_fixpr_enabled is set to 'true'
+
+          ### SARIF report generation and upload to GitHub Adavanced Security: Uncomment below to enable
+          # blackduck_reports_sarif_create: true # Create Black Duck SARIF report and upload it as artifact
+          # blackduck_reports_sarif_file_path: '/Users/tmp/report.sarif.json' # File path including file name where SARIF report should be created(need to include file name as well)
+          # blackduck_reports_sarif_severities: 'CRITICAL,HIGH'
+          # blackduck_reports_sarif_groupSCAIssues: true # By default true
+          # blackduck_upload_sarif_report: true  # Upload Black Duck SARIF report in GitHub Advanced Security tab
+          # github_token: ${{ secrets.GITHUB_TOKEN }} # Required when blackduck_upload_sarif_report is set as true
+          
+          ### To enable Black Duck policy badges
+          # blackduck_policy_badges_create: true
+          # blackduck_policy_badges_maxCount: 5
+          
+          # project_directory: ${{ vars.PROJECT_DIRECTORY }}
+  
+          ### Uncomment below configuration if Synopsys Bridge diagnostic files needs to be uploaded
+          # include_diagnostics: true
+       - name: Black Duck PR Scan
+         if: ${{ github.event_name == 'pull_request' }}
+         uses: synopsys-sig/synopsys-action@v1.13.0
+  
+         ### Use below configuration to set specific detect environment variables
+         env:
+           DETECT_PROJECT_NAME: ${{ github.event.repository.name }}
+         with:
+           blackduck_url: ${{ vars.BLACKDUCK_URL }}
+           blackduck_token: ${{ secrets.BLACKDUCK_TOKEN }}
+           blackduck_scan_full: false
+  
+           ### Below configuration is used to enable automatic pull request comment based on Black Duck scan result
+           blackduck_prComment_enabled: true
+           github_token: ${{ secrets.GITHUB_TOKEN }} 
+           # Mandatory when blackduck_automation_prcomment is set to 'true'
+           
+           ### To enable Black Duck policy badges
+           # blackduck_policy_badges_create: true
+           # blackduck_policy_badges_maxCount: 5
+           
+           # project_directory: ${{ vars.PROJECT_DIRECTORY }}
+ 
+           ### Uncomment below configuration if Synopsys Bridge diagnostic files needs to be uploaded
+           # include_diagnostics: true
